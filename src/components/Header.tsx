@@ -1,10 +1,18 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Link, NavLink as RouterNavLink } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 
-const NavLink = ({ to, children, onClick }) => (
+interface NavLinkProps {
+  to: string;
+  children: React.ReactNode;
+  onClick?: () => void;
+}
+
+const NavLink: React.FC<NavLinkProps> = ({ to, children, onClick }) => (
   <RouterNavLink
     to={to}
     onClick={onClick}
@@ -23,7 +31,7 @@ const NavLink = ({ to, children, onClick }) => (
   </RouterNavLink>
 );
 
-const MobileNavLink = ({ to, children, onClick }) => (
+const MobileNavLink: React.FC<NavLinkProps> = ({ to, children, onClick }) => (
   <RouterNavLink
     to={to}
     onClick={onClick}
@@ -35,17 +43,18 @@ const MobileNavLink = ({ to, children, onClick }) => (
   </RouterNavLink>
 );
 
-const Header = () => {
+const Header: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { t } = useTranslation();
   const logoUrl = "https://storage.googleapis.com/hostinger-horizons-assets-prod/602dd964-0f57-4bc6-be2b-94708998e4a2/180bafe4ceac739ddb00d50f2cf54d6a.png";
 
   const navItems = [
-    { to: '/', label: 'Home' },
-    { to: '/about', label: 'About Us' },
-    { to: '/services', label: 'Services' },
-    { to: '/portfolio', label: 'Portfolio' },
-    { to: '/blog', label: 'Blog' },
-    { to: '/contact', label: 'Contact' },
+    { to: '/', label: t('nav.home') },
+    { to: '/about', label: t('nav.about') },
+    { to: '/services', label: t('nav.services') },
+    { to: '/portfolio', label: t('nav.portfolio') },
+    { to: '/blog', label: t('nav.blog') },
+    { to: '/contact', label: t('nav.contact') },
   ];
 
   return (
@@ -62,20 +71,21 @@ const Header = () => {
             animate={{ scale: 1 }}
             transition={{ delay: 0.2, duration: 0.5 }}
           >
-            <Link to="/" className="flex items-center space-x-2">
+            <Link to="/" className="flex items-center gap-2">
               <img src={logoUrl} alt="WDC Logo" className="h-12 w-12 object-contain" />
               <span className="font-bold text-xl gradient-text">WDC</span>
             </Link>
           </motion.div>
-          <nav className="hidden md:flex space-x-1 lg:space-x-2">
+          <nav className="hidden md:flex gap-1 lg:gap-2">
             {navItems.map((item) => (
               <NavLink key={item.to} to={item.to}>{item.label}</NavLink>
             ))}
           </nav>
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center gap-3">
+            <LanguageSwitcher />
             <Link to="/contact" className="hidden md:block">
               <Button variant="outline" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground">
-                Get in Touch
+                {t('nav.getInTouch')}
               </Button>
             </Link>
             <button
@@ -111,7 +121,7 @@ const Header = () => {
               <div className="pt-4">
                 <Link to="/contact" onClick={() => setMobileMenuOpen(false)}>
                   <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
-                    Get in Touch
+                    {t('nav.getInTouch')}
                   </Button>
                 </Link>
               </div>

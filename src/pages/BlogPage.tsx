@@ -1,16 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
+import { useTranslation } from 'react-i18next';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, CalendarDays, UserCircle, Plus } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { CalendarDays, UserCircle, Plus } from 'lucide-react';
 import FileUploadForm from '@/components/FileUploadForm';
 import { supabase } from '@/lib/supabase';
 import { useToast } from '@/components/ui/use-toast';
 
+interface BlogPost {
+  id: string;
+  title: string;
+  author: string;
+  created_at: string;
+  file_url?: string;
+}
+
 const cardVariants = {
   hidden: { opacity: 0, y: 50 },
-  visible: (i) => ({
+  visible: (i: number) => ({
     opacity: 1,
     y: 0,
     transition: {
@@ -21,10 +29,11 @@ const cardVariants = {
   })
 };
 
-const BlogPage = () => {
+const BlogPage: React.FC = () => {
   const [showUploadForm, setShowUploadForm] = useState(false);
-  const [blogPosts, setBlogPosts] = useState([]);
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   useEffect(() => {
     fetchBlogPosts();
@@ -38,22 +47,22 @@ const BlogPage = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setBlogPosts(data);
+      setBlogPosts(data || []);
     } catch (error) {
       toast({
-        title: "خطأ",
-        description: "حدث خطأ أثناء تحميل المقالات",
+        title: "Error",
+        description: "An error occurred while loading articles",
         variant: "destructive"
       });
     }
   };
 
-  const handleUploadSuccess = (newPost) => {
-    setBlogPosts([newPost, ...blogPosts]);
+  const handleUploadSuccess = (newPost: Record<string, unknown>) => {
+    setBlogPosts([newPost as BlogPost, ...blogPosts]);
     setShowUploadForm(false);
     toast({
-      title: "تم النشر بنجاح",
-      description: "تم نشر المقال الجديد بنجاح"
+      title: "Success",
+      description: "Article published successfully"
     });
   };
 
@@ -67,10 +76,10 @@ const BlogPage = () => {
     >
       <div className="text-center mb-12 md:mb-16">
         <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight mb-4">
-          مقالات <span className="gradient-text">WDC</span>
+          {t('blog.headingPrefix')} <span className="gradient-text">{t('blog.heading')}</span>
         </h1>
         <p className="max-w-2xl mx-auto text-lg text-muted-foreground">
-          اكتشف أحدث المقالات والأفكار من فريق خبرائنا
+          {t('blog.subheading')}
         </p>
         <Button
           onClick={() => setShowUploadForm(!showUploadForm)}
@@ -78,11 +87,11 @@ const BlogPage = () => {
           variant="outline"
         >
           {showUploadForm ? (
-            "إلغاء"
+            t('blog.cancel')
           ) : (
             <>
-              <Plus className="mr-2 h-4 w-4" />
-              إضافة مقال جديد
+              <Plus className="me-2 h-4 w-4" />
+              {t('blog.addNew')}
             </>
           )}
         </Button>
@@ -96,27 +105,26 @@ const BlogPage = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {blogPosts.map((post, index) => (
-          <motion.custom
+          <motion.div
             key={post.id}
             custom={index}
             variants={cardVariants}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, amount: 0.2 }}
-            component={Card}
           >
             <Card className="w-full flex flex-col glassmorphism-card overflow-hidden group transform transition-all duration-300 hover:shadow-2xl hover:border-primary">
               <CardHeader>
                 <CardTitle className="text-2xl font-semibold text-foreground group-hover:text-primary transition-colors">
                   {post.title}
                 </CardTitle>
-                <div className="flex items-center space-x-4 text-xs text-muted-foreground mt-2">
+                <div className="flex items-center gap-4 text-xs text-muted-foreground mt-2">
                   <div className="flex items-center">
-                    <CalendarDays size={14} className="mr-1" />
-                    <span>{new Date(post.created_at).toLocaleDateString('ar-SA')}</span>
+                    <CalendarDays size={14} className="me-1" />
+                    <span>{new Date(post.created_at).toLocaleDateString()}</span>
                   </div>
                   <div className="flex items-center">
-                    <UserCircle size={14} className="mr-1" />
+                    <UserCircle size={14} className="me-1" />
                     <span>{post.author}</span>
                   </div>
                 </div>
@@ -129,12 +137,12 @@ const BlogPage = () => {
                     rel="noopener noreferrer"
                     className="text-primary hover:text-primary/80 text-sm"
                   >
-                    تحميل الملف
+                    {t('blog.download')}
                   </a>
                 )}
               </CardContent>
             </Card>
-          </motion.custom>
+          </motion.div>
         ))}
       </div>
     </motion.div>

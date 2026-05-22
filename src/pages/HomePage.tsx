@@ -7,7 +7,7 @@ import TestimonialsSection from '@/components/TestimonialsSection';
 import ContactSection from '@/components/ContactSection';
 import { motion } from 'framer-motion';
 
-const HomePage = () => {
+const HomePage: React.FC = () => {
   return (
     <motion.div
       initial={{ opacity: 0 }}

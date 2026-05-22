@@ -1,15 +1,18 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { Users, Award, Globe, Briefcase } from 'lucide-react';
 
-const stats = [
-  { icon: <Briefcase size={32} />, value: '150+', label: 'Projects Delivered' },
-  { icon: <Users size={32} />, value: '80+', label: 'Happy Clients' },
-  { icon: <Globe size={32} />, value: '15+', label: 'Countries Served' },
-  { icon: <Award size={32} />, value: '5+', label: 'Years Experience' },
-];
+const StatsSection: React.FC = () => {
+  const { t } = useTranslation();
 
-const StatsSection = () => {
+  const stats = [
+    { icon: <Briefcase size={32} />, value: '150+', label: t('stats.projects') },
+    { icon: <Users size={32} />, value: '80+', label: t('stats.clients') },
+    { icon: <Globe size={32} />, value: '15+', label: t('stats.countries') },
+    { icon: <Award size={32} />, value: '5+', label: t('stats.experience') },
+  ];
+
   return (
     <section className="py-16 md:py-20 relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-secondary/10 to-accent/10"></div>

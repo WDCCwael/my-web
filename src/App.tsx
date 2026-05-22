@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { Toaster } from '@/components/ui/toaster';
 import { useToast } from '@/components/ui/use-toast';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import WhatsAppButton from '@/components/WhatsAppButton';
+import AIChatWidget from '@/components/AIChatWidget';
 import ScrollToTop from '@/components/ScrollToTop';
 import HomePage from '@/pages/HomePage';
 import AboutPage from '@/pages/AboutPage';
@@ -19,9 +21,16 @@ import { supabase } from '@/lib/supabase';
 function App() {
   const location = useLocation();
   const { toast } = useToast();
+  const { i18n } = useTranslation();
 
-  React.useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+  useEffect(() => {
+    const dir = i18n.language === 'ar' ? 'rtl' : 'ltr';
+    document.documentElement.setAttribute('dir', dir);
+    document.documentElement.setAttribute('lang', i18n.language);
+  }, [i18n.language]);
+
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'SIGNED_IN') {
         toast({
           title: "Welcome back!",
@@ -58,6 +67,7 @@ function App() {
       </AnimatePresence>
       <Footer />
       <WhatsAppButton />
+      <AIChatWidget />
     </div>
   );
 }

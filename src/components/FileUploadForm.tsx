@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input.jsx';
 import { Label } from '@/components/ui/label.jsx';
@@ -7,32 +8,37 @@ import { useToast } from '@/components/ui/use-toast';
 import { Upload, Loader2 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 
-const FileUploadForm = ({ onUploadSuccess }) => {
-  const [file, setFile] = useState(null);
+interface FileUploadFormProps {
+  onUploadSuccess?: (post: Record<string, unknown>) => void;
+}
+
+const FileUploadForm: React.FC<FileUploadFormProps> = ({ onUploadSuccess }) => {
+  const [file, setFile] = useState<File | null>(null);
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+  const { t } = useTranslation();
 
-  const handleFileChange = (e) => {
-    const selectedFile = e.target.files[0];
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0];
     if (selectedFile && (selectedFile.type === 'application/msword' || selectedFile.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document')) {
       setFile(selectedFile);
     } else {
       toast({
-        title: "خطأ في الملف",
-        description: "يرجى اختيار ملف Word (.doc أو .docx)",
+        title: "Error",
+        description: "Please select a Word file (.doc or .docx)",
         variant: "destructive"
       });
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!file || !title || !author) {
       toast({
-        title: "حقول مطلوبة",
-        description: "يرجى ملء جميع الحقول المطلوبة",
+        title: "Required fields",
+        description: "Please fill all required fields",
         variant: "destructive"
       });
       return;
@@ -40,52 +46,42 @@ const FileUploadForm = ({ onUploadSuccess }) => {
 
     setLoading(true);
     try {
-      // Upload file to Supabase Storage
       const fileExt = file.name.split('.').pop();
       const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`;
-      const { data: fileData, error: fileError } = await supabase.storage
+      const { error: fileError } = await supabase.storage
         .from('blog_documents')
         .upload(fileName, file);
 
       if (fileError) throw fileError;
 
-      // Get public URL for the uploaded file
       const { data: { publicUrl } } = supabase.storage
         .from('blog_documents')
         .getPublicUrl(fileName);
 
-      // Create blog post entry
       const { data: post, error: postError } = await supabase
         .from('blog_posts')
-        .insert([
-          {
-            title,
-            author,
-            file_url: publicUrl,
-          }
-        ])
+        .insert([{ title, author, file_url: publicUrl }])
         .select()
         .single();
 
       if (postError) throw postError;
 
       toast({
-        title: "تم التحميل بنجاح",
-        description: "تم تحميل الملف وإنشاء المقال بنجاح",
+        title: "Success",
+        description: "Article uploaded successfully",
       });
 
-      if (onUploadSuccess) {
+      if (onUploadSuccess && post) {
         onUploadSuccess(post);
       }
 
-      // Reset form
       setFile(null);
       setTitle('');
       setAuthor('');
     } catch (error) {
       toast({
-        title: "خطأ",
-        description: "حدث خطأ أثناء تحميل الملف",
+        title: "Error",
+        description: "An error occurred while uploading",
         variant: "destructive"
       });
     } finally {
@@ -101,31 +97,31 @@ const FileUploadForm = ({ onUploadSuccess }) => {
     >
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="space-y-2">
-          <Label htmlFor="title">عنوان المقال</Label>
+          <Label htmlFor="title">{t('blog.articleTitle')}</Label>
           <Input
             id="title"
             type="text"
             value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="أدخل عنوان المقال"
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
+            placeholder={t('blog.articleTitle')}
             className="w-full"
           />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="author">اسم الكاتب</Label>
+          <Label htmlFor="author">{t('blog.authorName')}</Label>
           <Input
             id="author"
             type="text"
             value={author}
-            onChange={(e) => setAuthor(e.target.value)}
-            placeholder="أدخل اسم الكاتب"
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAuthor(e.target.value)}
+            placeholder={t('blog.authorName')}
             className="w-full"
           />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="file">ملف Word</Label>
+          <Label htmlFor="file">{t('blog.wordFile')}</Label>
           <Input
             id="file"
             type="file"
@@ -135,20 +131,16 @@ const FileUploadForm = ({ onUploadSuccess }) => {
           />
         </div>
 
-        <Button
-          type="submit"
-          className="w-full"
-          disabled={loading}
-        >
+        <Button type="submit" className="w-full" disabled={loading}>
           {loading ? (
             <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              جاري التحميل...
+              <Loader2 className="me-2 h-4 w-4 animate-spin" />
+              {t('blog.uploading')}
             </>
           ) : (
             <>
-              <Upload className="mr-2 h-4 w-4" />
-              تحميل المقال
+              <Upload className="me-2 h-4 w-4" />
+              {t('blog.uploadArticle')}
             </>
           )}
         </Button>

@@ -1,8 +1,8 @@
 import React from 'react';
-import ContactSection from '@/components/ContactSection'; // Reusing the component
+import ContactSection from '@/components/ContactSection';
 import { motion } from 'framer-motion';
 
-const ContactPage = () => {
+const ContactPage: React.FC = () => {
   return (
     <motion.div
       initial={{ opacity: 0 }}

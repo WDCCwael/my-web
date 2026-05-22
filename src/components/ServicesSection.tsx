@@ -1,21 +1,12 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Code, Users, Film, Search, Palette, Megaphone, TrendingUp, MonitorSmartphone } from 'lucide-react';
 
-const services = [
-  { title: 'Website Design & Development', description: 'High-performance, SEO-optimized, and mobile-friendly websites that convert visitors into customers.', icon: <MonitorSmartphone size={40} className="text-primary" />, iconBg: 'bg-primary/10' },
-  { title: 'Social Media Management', description: 'Engaging content strategies, community building, and targeted ad campaigns across all platforms.', icon: <Users size={40} className="text-secondary" />, iconBg: 'bg-secondary/10' },
-  { title: 'Video Production', description: 'Cinematic brand storytelling and high-impact visuals that captivate your audience.', icon: <Film size={40} className="text-accent" />, iconBg: 'bg-accent/10' },
-  { title: 'SEO & Marketing Analytics', description: 'Data-driven strategies to boost your search visibility and maximize conversions.', icon: <Search size={40} className="text-primary" />, iconBg: 'bg-primary/10' },
-  { title: 'Branding & Identity', description: 'Unique logos, cohesive brand guidelines, and visual identities that leave lasting impressions.', icon: <Palette size={40} className="text-secondary" />, iconBg: 'bg-secondary/10' },
-  { title: 'Digital Advertising', description: 'High-ROI campaigns on Google, Facebook, Instagram, TikTok and more platforms.', icon: <Megaphone size={40} className="text-accent" />, iconBg: 'bg-accent/10' },
-  { title: 'Business Strategy & Growth', description: 'Market insights, brand positioning, and revenue optimization for sustainable growth.', icon: <TrendingUp size={40} className="text-primary" />, iconBg: 'bg-primary/10' },
-];
-
 const cardVariants = {
   hidden: { opacity: 0, y: 50 },
-  visible: (i) => ({
+  visible: (i: number) => ({
     opacity: 1,
     y: 0,
     transition: {
@@ -26,7 +17,19 @@ const cardVariants = {
   })
 };
 
-const ServicesSection = () => {
+const ServicesSection: React.FC = () => {
+  const { t } = useTranslation();
+
+  const services = [
+    { title: t('services.webDesign'), description: t('services.webDesignDesc'), icon: <MonitorSmartphone size={40} className="text-primary" />, iconBg: 'bg-primary/10' },
+    { title: t('services.socialMedia'), description: t('services.socialMediaDesc'), icon: <Users size={40} className="text-secondary" />, iconBg: 'bg-secondary/10' },
+    { title: t('services.videoProduction'), description: t('services.videoProductionDesc'), icon: <Film size={40} className="text-accent" />, iconBg: 'bg-accent/10' },
+    { title: t('services.seo'), description: t('services.seoDesc'), icon: <Search size={40} className="text-primary" />, iconBg: 'bg-primary/10' },
+    { title: t('services.branding'), description: t('services.brandingDesc'), icon: <Palette size={40} className="text-secondary" />, iconBg: 'bg-secondary/10' },
+    { title: t('services.advertising'), description: t('services.advertisingDesc'), icon: <Megaphone size={40} className="text-accent" />, iconBg: 'bg-accent/10' },
+    { title: t('services.strategy'), description: t('services.strategyDesc'), icon: <TrendingUp size={40} className="text-primary" />, iconBg: 'bg-primary/10' },
+  ];
+
   return (
     <section id="services" className="py-16 md:py-24 bg-background">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -38,10 +41,10 @@ const ServicesSection = () => {
           className="text-center mb-12 md:mb-16"
         >
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight mb-4">
-            Our <span className="gradient-text">Expertise</span>
+            {t('services.heading')} <span className="gradient-text">{t('services.headingHighlight')}</span>
           </h2>
           <p className="max-w-2xl mx-auto text-lg text-muted-foreground">
-            Delivering innovation, creativity, and measurable results across a spectrum of digital services.
+            {t('services.subheading')}
           </p>
         </motion.div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

@@ -1,9 +1,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Mail, Phone, Rocket } from 'lucide-react';
 
-const ContactSection = () => {
+const ContactSection: React.FC = () => {
+  const { t } = useTranslation();
   const email = "w@wdc-c.com";
   const phone = "+201060630958";
 
@@ -18,10 +20,10 @@ const ContactSection = () => {
         >
           <Rocket size={48} className="mx-auto mb-4 text-primary" />
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight mb-4">
-            Let’s Take Your Brand to <span className="gradient-text">New Heights</span>
+            {t('contact.heading')} <span className="gradient-text">{t('contact.headingHighlight')}</span>
           </h2>
           <p className="max-w-xl mx-auto text-lg text-muted-foreground">
-            Ready to transform your digital presence? Get in touch today!
+            {t('contact.subheading')}
           </p>
         </motion.div>
 
@@ -32,24 +34,24 @@ const ContactSection = () => {
           className="max-w-lg mx-auto glassmorphism-card p-8 md:p-12 rounded-xl shadow-2xl"
         >
           <div className="space-y-6">
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center gap-4">
               <div className="p-3 bg-primary/10 rounded-full">
                 <Mail size={24} className="text-primary" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-foreground">Email Us</h3>
+                <h3 className="text-lg font-semibold text-foreground">{t('contact.emailUs')}</h3>
                 <a href={`mailto:${email}`} className="text-primary hover:underline break-all">
                   {email}
                 </a>
               </div>
             </div>
 
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center gap-4">
               <div className="p-3 bg-secondary/10 rounded-full">
                 <Phone size={24} className="text-secondary" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-foreground">Call Us</h3>
+                <h3 className="text-lg font-semibold text-foreground">{t('contact.callUs')}</h3>
                 <a href={`tel:${phone}`} className="text-secondary hover:underline">
                   {phone}
                 </a>
@@ -63,11 +65,10 @@ const ContactSection = () => {
             transition={{ duration: 0.5, delay: 0.4 }}
             className="mt-10 text-center"
           >
-            {/* The form will be added here in a future step if requested by the user */}
-             <a href={`mailto:${email}?subject=Inquiry%20from%20WDC%20Website&body=Hello%20WDC%20Team,%0D%0A%0D%0AI'd%20like%20to%20inquire%20about...`}>
+            <a href={`mailto:${email}?subject=Inquiry%20from%20WDC%20Website&body=Hello%20WDC%20Team,%0D%0A%0D%0AI'd%20like%20to%20inquire%20about...`}>
               <Button size="lg" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground">
-                Send an Email Inquiry
-                <Rocket className="ml-2 h-5 w-5" />
+                {t('contact.sendInquiry')}
+                <Rocket className="ms-2 h-5 w-5" />
               </Button>
             </a>
           </motion.div>
